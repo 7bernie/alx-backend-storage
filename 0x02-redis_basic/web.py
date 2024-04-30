@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-web cache and tracker
+Web cache and tracker
 """
 import requests
 import redis
@@ -10,8 +10,8 @@ store = redis.Redis()
 
 
 def count_url_access(method):
-    """ Decorator counting how many times
-    a URL is accessed """
+    """ Decorator tracks how many times
+    a URL is accessed in the key """
     @wraps(method)
     def wrapper(url):
         cached_key = "cached:" + url
@@ -31,6 +31,6 @@ def count_url_access(method):
 
 @count_url_access
 def get_page(url: str) -> str:
-    """ Returns HTML content of a url """
+    """ Obtain and return HTML content of a url """
     res = requests.get(url)
     return res.text
