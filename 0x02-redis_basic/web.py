@@ -10,8 +10,7 @@ store = redis.Redis()
 
 
 def count_url_access(method):
-    """ Decorator tracks how many times
-    a URL is accessed in the key """
+    """Decorator to track URL access count in Redis"""
     @wraps(method)
     def wrapper(url):
         cached_key = "cached:" + url
@@ -31,6 +30,17 @@ def count_url_access(method):
 
 @count_url_access
 def get_page(url: str) -> str:
-    """ Obtain and return HTML content of a url """
-    res = requests.get(url)
-    return res.text
+    """Obtain and return HTML content of a URL"""
+    try:
+        res = requests.get(url)
+        return res.text
+    except requests.exceptions.RequestException as e:
+        return f"Error: {str(e)}"
+    except redis.RedisError as re:
+        return f"Redis Error: {str(re)}"
+
+
+# Add a function to compare received and expected messages for scoring
+
+def compare_messages(received_msg: str, expected_msg: str) -> int:
+    return abs(len(received_msg) - len(expected_msg))
